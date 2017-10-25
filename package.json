@@ -1,0 +1,27 @@
+{
+  "name": "all-the-news-thats-fit-to-scrape",
+  "version": "1.0.0",
+  "description": "All The News Thats Fit to Scrape Homework",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rgmcrary/All-the-News-Thats-Fit-to-Scrape.git"
+  },
+  "author": "Rich McRary",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rgmcrary/All-the-News-Thats-Fit-to-Scrape/issues"
+  },
+  "homepage": "https://github.com/rgmcrary/All-the-News-Thats-Fit-to-Scrape#readme",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "cheerio": "^1.0.0-rc.2",
+    "express": "^4.16.2",
+    "express-handlebars": "^3.0.0",
+    "mongoose": "^4.12.4",
+    "request": "^2.83.0"
+  }
+}
