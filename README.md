@@ -12,7 +12,7 @@ The app displays the following:
 
      * URL - the url to the original article
   
-     * Feel free to add more content to your database (photos, bylines, and so on).
+     * Additional content (photos, bylines, and so on).
 
 Users are able to leave comments on the articles displayed and revisit them later. The comments are saved to the database as and are associated with their articles. Users are able to delete comments left on articles. All stored comments are visible to every user.
 
@@ -28,4 +28,5 @@ Users are able to leave comments on the articles displayed and revisit them late
 * HTML5
 * JavaScript
 * Mongoose
+* Morgan
 * Request
