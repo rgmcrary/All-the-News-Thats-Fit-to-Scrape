@@ -7,7 +7,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var logger = require('morgan');
 var mongoose = require('mongoose');
-var expre
+var expre;
 // Requiring our Note and Article models
 var Note = require('./models/Note.js');
 var Article = require('./models/Article.js');
@@ -19,13 +19,13 @@ var cheerio = require('cheerio');
 mongoose.Promise = Promise;
 
 // Set Handlebars
-var exphbs = require("express-handlebars");
+var exphbs = require('express-handlebars');
 
 // Initialize Express
 var app = express();
 
-app.engine("handlebars", exphbs({ defaultLayout: "main" }));
-app.set("view engine", "handlebars");
+app.engine('handlebars', exphbs({ defaultLayout: 'main' }));
+app.set('view engine', 'handlebars');
 
 // Use morgan and body parser with our app
 //app.use()
@@ -40,7 +40,9 @@ app.use(
 app.use(express.static('public'));
 
 // Database configuration with mongoose
-mongoose.connect('mongodb://heroku_b97jh5ds:rquv9v5kf5foa2i00te99mkl88@ds117869.mlab.com:17869/heroku_b97jh5ds');
+mongoose.connect(
+  'mongodb://heroku_b97jh5ds:rquv9v5kf5foa2i00te99mkl88@ds117869.mlab.com:17869/heroku_b97jh5ds'
+);
 var db = mongoose.connection;
 
 // Show any mongoose errors
@@ -58,35 +60,61 @@ db.once('open', function() {
 
 // Main route
 app.get('/', function(req, res) {
-  res.render('index', {});
+  var hbsObj = {};
+  Article.find({}, (error, doc) => {
+    if (error) {
+      res.error(error);
+    } else {
+      hbsObj.articles = doc;
+      res.render('index', hbsObj);
+    }
+  });
 });
 
+// View Saved Articles
+app.get('/saved', function(req, res) {
+  var hbsObj = {};
+  Article.find({}, (error, doc) => {
+    if (error) {
+      res.error(error);
+    } else {
+      hbsObj.articles = doc;
+      res.render('saved', hbsObj);
+    }
+  });
+});
 
-// A GET request to scrape the onion website
-app.get('/scrape', function(req, res) {
+// GET request to scrape the website
+app.get('/api/scrape', function(req, res) {
   // First, we grab the body of the html with request
   request('http://www.theonion.com/', function(error, response, html) {
     // Then, we load that into cheerio and save it to $ for a shorthand selector
     var $ = cheerio.load(html);
-    // Now, we grab every h2 within an article tag, and do the following:
-    $('.headline').each(function(i, element) {
+    // Now, we grab the elements within the headline article tag, and do the following:
+    $('article').each(function(i, element) {
       // Save an empty result object
       var result = {};
 
-      // Add the text and href of every link, and save them as properties of the result object
+      // Add the text and href of every link, and the summary and save them as properties of the result object
+      result.post_id = $(this).attr('id');
       result.title = $(this)
-        .children('a')
+        .find('header h1 a')
         .text();
       result.link = $(this)
-        .children('a')
+        .find('header h1 a')
         .attr('href');
+      result.summary = $(this)
+        .find('div.item__content div.excerpt p')
+        .text();
 
-      // Using our Article model, create a new entry
-      // This effectively passes the result object to the entry (and the title and link)
+      // Create a new entry
       var entry = new Article(result);
 
-      // Now, save that entry to the db
-      entry.save(function(err, doc) {
+      // Saves the results to the db
+      entry.update({ upsert: true }, { post_id: result.post_id }, function(
+        err,
+        doc
+      ) {
         // Log any errors
         if (err) {
           console.log(err);
@@ -101,8 +129,8 @@ app.get('/scrape', function(req, res) {
   res.send('Scrape Complete');
 });
 
-// This will get the articles we scraped from the mongoDB
-app.get('/articles', function(req, res) {
+// Remove after testing is complete
+app.get('/api/articles', function(req, res) {
   // Grabs all of the articles
   Article.find({}, (error, doc) => {
     if (error) {
@@ -114,7 +142,7 @@ app.get('/articles', function(req, res) {
 });
 
 // This will grab an article by it's ObjectId
-app.get('/articles/:id', function(req, res) {
+app.get('/api/articles/:id', function(req, res) {
   Article.find({
     _id: req.params.id
   })
@@ -128,29 +156,48 @@ app.get('/articles/:id', function(req, res) {
 });
 
 // Creates a new note or replaces an existing note
-app.post('/articles/:id', function(req, res) {
-  const newNote = new Note(req.body);
+// app.post('/api/articles/:id', function(req, res) {
+//   const newNote = new Note(req.body);
 
-  note.save((error, doc) => {
-    if (error) {
-      console.error(error);
-    } else {
-      Article.findOneAndUpdate(
-        { _id: req.params.id },
-        { $set: { note: doc._id } },
-        function(error, doc) {
-          if (error) {
-            console.error(error);
-          } else {
-            res.json(doc);
-          }
-        }
-      );
+//   note.save((error, doc) => {
+//     if (error) {
+//       console.error(error);
+//     } else {
+//       Article.findOneAndUpdate(
+//         { _id: req.params.id },
+//         { $set: { note: doc._id } },
+//         function(error, doc) {
+//           if (error) {
+//             console.error(error);
+//           } else {
+//             res.json(doc);
+//           }
+//         }
+//       );
+//     }
+  // });
+// });
+
+// Save an Article
+app.post('/api/articles/:id', function(req, res) {
+  var booleanVal = new Boolean(req.body.saved);
+  console.log(booleanVal)
+  Article.findOneAndUpdate(
+    { _id: req.params.id },
+    { $set: { saved: booleanVal } },
+    function(error, doc) {
+      if (error) {
+        console.error(error);
+      } else {
+        res.json(doc);
+      }
     }
-  });
+  );
 });
 
 // Listen on port 3000
 app.listen(3000, function() {
   console.log('App running on port 3000!');
 });
+
+module.exports = app;
