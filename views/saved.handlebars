@@ -1,0 +1,18 @@
+{{!-- Saved Articles View --}}
+
+<div class="container-fluid article-container">
+  {{#each articles}}
+  <div class="panel panel-default">
+    <div class="panel panel-heading">
+      <h3>
+        <a class="article-link" href="{{link}}" target="_blank">{{title}}</a>
+        <a class="btn btn-danger delete-it" data-id="{{id}}" data-save="false">DELETE SAVE</a>
+        <a class="btn btn-success new-note" data-id="{{id}}">ADD NOTES</a>
+      </h3>
+    </div>
+    <div class="panel-body">
+      <p class="summary">{{summary}}</p>
+    </div>
+  </div>
+  {{/each}}
+</div>
