@@ -6,6 +6,8 @@ body {
 }
 
 .navbar {
+  position: fixed;
+  width: 100%;
   background-color: lightblue;
   margin: 0px !important;
 }
@@ -85,14 +87,16 @@ li {
 .jumbotron {
   text-align: center;
   width: 100%;
-  height: 300px;
+  height: 400px;
+  padding-top: 78px;
   margin-left: auto;
   margin-right: auto;
   vertical-align: middle;
 }
 
 .title {
-  padding-top: 20px;
+
+  padding-top: 75px;
 }
 
 .panel {
