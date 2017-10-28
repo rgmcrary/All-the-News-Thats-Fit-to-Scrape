@@ -61,7 +61,7 @@ db.once('open', function() {
 // Main route
 app.get('/', function(req, res) {
   var hbsObj = {};
-  Article.find({}, (error, doc) => {
+  Article.find({ saved: {'$ne': true} }, (error, doc) => {
     if (error) {
       res.error(error);
     } else {
@@ -74,7 +74,7 @@ app.get('/', function(req, res) {
 // View Saved Articles
 app.get('/saved', function(req, res) {
   var hbsObj = {};
-  Article.find({}, (error, doc) => {
+  Article.find({ saved: true }, (error, doc) => {
     if (error) {
       res.error(error);
     } else {
@@ -129,17 +129,6 @@ app.get('/api/scrape', function(req, res) {
   res.send('Scrape Complete');
 });
 
-// Remove after testing is complete
-app.get('/api/articles', function(req, res) {
-  // Grabs all of the articles
-  Article.find({}, (error, doc) => {
-    if (error) {
-      res.error(error);
-    } else {
-      res.json(doc);
-    }
-  });
-});
 
 // This will grab an article by it's ObjectId
 app.get('/api/articles/:id', function(req, res) {
@@ -180,7 +169,7 @@ app.get('/api/articles/:id', function(req, res) {
 
 // Save an Article
 app.post('/api/articles/:id', function(req, res) {
-  var booleanVal = new Boolean(req.body.saved);
+  var booleanVal = req.body.saved === 'true' ? true : false;
   console.log(booleanVal)
   Article.findOneAndUpdate(
     { _id: req.params.id },
