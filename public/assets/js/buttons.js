@@ -9,7 +9,7 @@ $(document).ready(function() {
   $('.delete-it').on('click', handleUpdateArticle);
   $('.new-note').on('click', handleAddNote);
   $('.save-note').on('click', handleSaveNote);
-  // $('.delete-note').on('click', handleDeleteNote);
+  $('.note-container').on('click', '.delete-note', handleDeleteNote);
 
   // New Scrape
   function handleArticleScrape() {
@@ -48,14 +48,19 @@ $(document).ready(function() {
       console.log(result);
 
       if (result.length === 0) {
-        var noOutPut =
-          "<li>No notes for this article yet.</li>";
-          $('.note-container').append(noOutPut);
+        var noOutPut = '<li class="noteText">No notes for this article yet.</li>';
+        $('.note-container').append(noOutPut);
       } else {
         for (var i = 0; i < result.length; i++) {
           var outPut =
-            "<li>" + result[i].noteText + '</li>';
-            $('.note-container').append(outPut);
+            '<li class="noteText">' +
+            result[i].noteText +
+            '<a class="btn btn-xs btn-danger delete-note" data-id="' +
+            result[i]._id +
+            '" data-save="false" data-articleId="' +
+            result[i].post_id +
+            '">X</a></li>';
+          $('.note-container').append(outPut);
         }
       }
 
@@ -91,15 +96,16 @@ $(document).ready(function() {
   }
 
   //   Delete a note
-  //    function handleDeleteNote() {
-  //     var id = $(this).data('id');
-  //     // Send the PUT request.
-  //     $.ajax('/api/expense/delete/' + id, {
-  //       type: 'PUT'
-  //     }).then(function() {
-  //       console.log('deleted note');
-  //       // Reload the page to get the updated list
-  //       location.reload();
-  //     });
-  //   };
+  function handleDeleteNote() {
+    var noteId = $(this).data('id');
+
+    // Send the PUT request.
+    $.ajax('/api/articles/note/' + noteId, {
+      type: 'PUT'
+    }).then(function() {
+      console.log('deleted note');
+      // Reload the page to get the updated list
+      location.reload();
+    });
+  }
 });
