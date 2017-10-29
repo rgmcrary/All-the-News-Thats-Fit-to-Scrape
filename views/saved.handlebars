@@ -1,5 +1,12 @@
 {{!-- Saved Articles View --}}
 
+ {{!-- Main name area --}}
+  <div class=jumbotron>
+    <h1 class="title">Saved Articles</h1>
+    <h2 class="newspaper">The Onion</h2>
+  </div>
+
+
 <div class="container-fluid article-container">
   {{#each articles}}
   <div class="panel panel-default">
@@ -16,3 +23,34 @@
   </div>
   {{/each}}
 </div>
+
+
+<div class="modal fade" tabindex="-1" role="dialog" id="noteModal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title">Notes For Article:
+          <span id="articleId"></span>
+        </h4>
+      </div>
+      <div class="modal-body">
+        <div id="existingNotes">
+          <ul class="note-container">
+          </ul>
+        </div>
+        <div class="text-center">
+          <textarea placeholder="New Note" rows="4" cols="60" id="newNote"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary save-note">Save Note</button>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
