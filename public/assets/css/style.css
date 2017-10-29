@@ -3,6 +3,8 @@ body {
   font-size: 13px;
   line-height: 1.846;
   color: #666666;
+  background-color: #F0F8FF;
+  /* background-image: url(/assets/css/images/paperbackground.png); */
 }
 
 .navbar {
@@ -10,12 +12,13 @@ body {
   width: 100%;
   background-color: lightblue;
   margin: 0px !important;
+  z-index: 9999;
 }
 
 .upper-nav {
-margin: 0px;
-margin-top: 7px;
-vertical-align: middle;
+  margin: 0px;
+  margin-top: 7px;
+  vertical-align: middle;
 }
 
 .navbar-brand {
@@ -27,7 +30,7 @@ vertical-align: middle;
   margin-left: 0px !important;
 }
 
-#iaits{
+#iaits {
   border: none;
   transition: all 0.4s;
   vertical-align: middle;
@@ -36,7 +39,7 @@ vertical-align: middle;
   text-align: center;
 }
 
-#iaits:hover{
+#iaits:hover {
   color: wheat;
 }
 
@@ -58,7 +61,7 @@ vertical-align: middle;
   user-select: none;
 }
 
-#upper-button:hover{
+#upper-button:hover {
   background-color: lightblue;
   color: wheat;
 }
@@ -70,14 +73,14 @@ vertical-align: middle;
   font-weight: normal;
   text-align: center;
   vertical-align: middle;
-  background-color: #38B0DE;
+  background-color: #38b0de;
   color: #ffffff;
   font-size: 16px;
-  }
+}
 
-  #scrape-button:hover {
-    background-color: green;
-  }
+#scrape-button:hover {
+  background-color: green;
+}
 
 li {
   padding: 5px;
@@ -92,10 +95,10 @@ li {
   margin-left: auto;
   margin-right: auto;
   vertical-align: middle;
+  background-image: url(/assets/css/images/paperbackground.jpeg);
 }
 
 .title {
-
   padding-top: 75px;
 }
 
@@ -109,7 +112,6 @@ li {
   position: relative;
   margin-bottom: 0px;
   padding-top: 0px;
-
 }
 
 .panel-body {
@@ -154,4 +156,14 @@ li {
   position: absolute;
   top: 20px;
   right: 20px;
+}
+
+#existingNotes {
+  margin-bottom: 15px;
+}
+
+#newNote {
+  padding: 10px;
+  resize: none;
+  font-size: 16px;
 }
