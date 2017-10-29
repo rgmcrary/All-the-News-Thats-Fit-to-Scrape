@@ -111,22 +111,24 @@ app.get('/api/scrape', function(req, res) {
       var entry = new Article(result);
 
       // Saves the results to the db
-      Article.update({ post_id: result.post_id }, {$setOnInsert: entry}, { upsert: true }, function(
-        err,
-        doc
-      ) {
-        // Log any errors
-        if (err) {
-          console.log(err);
-        } else {
-          // Or log the doc
-          console.log(doc);
+      Article.update(
+        { post_id: result.post_id },
+        { $setOnInsert: entry },
+        { upsert: true },
+        function(err, doc) {
+          // Log any errors
+          if (err) {
+            console.log(err);
+          } else {
+            // Or log the doc
+            console.log(doc);
+          }
         }
-      });
+      );
     });
+    // Tell the browser that we finished scraping the text
+    res.send('Scrape Complete');
   });
-  // Tell the browser that we finished scraping the text
-  res.send('Scrape Complete');
 });
 
 // Creates a new note or replaces an existing note
@@ -135,22 +137,12 @@ app.post('/api/articles/note/:id', function(req, res) {
   noteObject.post_id = req.params.id;
   noteObject.noteText = req.body.note;
   var newNote = new Note(noteObject);
-  
+
   newNote.save(function(error, doc) {
     if (error) {
       console.error(error);
     } else {
-      Article.findOneAndUpdate(
-        { _id: req.params.id },
-        { $push: { note: doc._id } },
-        function(error, doc) {
-          if (error) {
-            console.error(error);
-          } else {
-            res.json(doc);
-          }
-        }
-      );
+      res.json(doc);
     }
   });
 });
@@ -169,6 +161,19 @@ app.get('/api/notes/:id', function(req, res) {
       }
     }
   );
+});
+
+// Delete a note
+app.put('/api/articles/note/:id', function(req, res) {
+  var noteId = req.params.id;
+
+  Note.remove({ _id: noteId }, function(error, doc) {
+    if (error) {
+      console.error(error);
+    } else {
+      res.json(doc);
+    }
+  });
 });
 
 // Save an Article
