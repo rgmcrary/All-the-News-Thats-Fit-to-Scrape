@@ -12,7 +12,7 @@ body {
   width: 100%;
   background-color: lightblue;
   margin: 0px !important;
-  z-index: 9999;
+  z-index: 999;
 }
 
 .upper-nav {
@@ -162,8 +162,18 @@ li {
   margin-bottom: 15px;
 }
 
+.noteText {
+  font-size: 16px;
+}
+
 #newNote {
   padding: 10px;
   resize: none;
   font-size: 16px;
+}
+
+.delete-note {
+  font-size: 12px;
+  right: 40px;
+  position: absolute;
 }
