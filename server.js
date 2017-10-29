@@ -23,6 +23,7 @@ var exphbs = require('express-handlebars');
 
 // Initialize Express
 var app = express();
+var PORT = process.env.PORT || 3000;
 
 app.engine('handlebars', exphbs({ defaultLayout: 'main' }));
 app.set('view engine', 'handlebars');
@@ -194,8 +195,8 @@ app.post('/api/articles/:id', function(req, res) {
 });
 
 // Listen on port 3000
-app.listen(3000, function() {
-  console.log('App running on port 3000!');
+app.listen(PORT, function() {
+    console.log("App listening on PORT " + PORT);
 });
 
 module.exports = app;
