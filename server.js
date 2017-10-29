@@ -61,9 +61,9 @@ db.once('open', function() {
 // Main route
 app.get('/', function(req, res) {
   var hbsObj = {};
-  Article.find({ saved: {'$ne': true} }, (error, doc) => {
+  Article.find({ saved: { $ne: true } }, function(error, doc) {
     if (error) {
-      res.error(error);
+      res.json(error);
     } else {
       hbsObj.articles = doc;
       res.render('index', hbsObj);
@@ -74,9 +74,9 @@ app.get('/', function(req, res) {
 // View Saved Articles
 app.get('/saved', function(req, res) {
   var hbsObj = {};
-  Article.find({ saved: true }, (error, doc) => {
+  Article.find({ saved: true }, function(error, doc) {
     if (error) {
-      res.error(error);
+      res.json(error);
     } else {
       hbsObj.articles = doc;
       res.render('saved', hbsObj);
@@ -111,7 +111,7 @@ app.get('/api/scrape', function(req, res) {
       var entry = new Article(result);
 
       // Saves the results to the db
-      entry.update({ upsert: true }, { post_id: result.post_id }, function(
+      Article.update({ post_id: result.post_id }, {$setOnInsert: entry}, { upsert: true }, function(
         err,
         doc
       ) {
@@ -129,48 +129,52 @@ app.get('/api/scrape', function(req, res) {
   res.send('Scrape Complete');
 });
 
-
-// This will grab an article by it's ObjectId
-app.get('/api/articles/:id', function(req, res) {
-  Article.find({
-    _id: req.params.id
-  })
-    .populate('note')
-    .then(doc => {
-      res.json(doc);
-    })
-    .catch(error => {
-      res.json(error);
-    });
+// Creates a new note or replaces an existing note
+app.post('/api/articles/note/:id', function(req, res) {
+  var noteObject = {};
+  noteObject.post_id = req.params.id;
+  noteObject.noteText = req.body.note;
+  var newNote = new Note(noteObject);
+  
+  newNote.save(function(error, doc) {
+    if (error) {
+      console.error(error);
+    } else {
+      Article.findOneAndUpdate(
+        { _id: req.params.id },
+        { $push: { note: doc._id } },
+        function(error, doc) {
+          if (error) {
+            console.error(error);
+          } else {
+            res.json(doc);
+          }
+        }
+      );
+    }
+  });
 });
 
-// Creates a new note or replaces an existing note
-// app.post('/api/articles/:id', function(req, res) {
-//   const newNote = new Note(req.body);
-
-//   note.save((error, doc) => {
-//     if (error) {
-//       console.error(error);
-//     } else {
-//       Article.findOneAndUpdate(
-//         { _id: req.params.id },
-//         { $set: { note: doc._id } },
-//         function(error, doc) {
-//           if (error) {
-//             console.error(error);
-//           } else {
-//             res.json(doc);
-//           }
-//         }
-//       );
-//     }
-  // });
-// });
+// This will grab all notes by article Id
+app.get('/api/notes/:id', function(req, res) {
+  Note.find(
+    {
+      post_id: req.params.id
+    },
+    function(error, doc) {
+      if (error) {
+        res.json(error);
+      } else {
+        res.json(doc);
+      }
+    }
+  );
+});
 
 // Save an Article
 app.post('/api/articles/:id', function(req, res) {
   var booleanVal = req.body.saved === 'true' ? true : false;
-  console.log(booleanVal)
+  console.log(booleanVal);
   Article.findOneAndUpdate(
     { _id: req.params.id },
     { $set: { saved: booleanVal } },
